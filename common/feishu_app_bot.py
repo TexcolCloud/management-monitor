@@ -301,7 +301,13 @@ class FeishuOutboundBot:
         return image_key
 
     def upload_file(self, file_path: str) -> str:
-        data = self._upload_media(FILE_UPLOAD_URL, file_path, "file", {"file_type": "stream"})
+        filename = os.path.basename(file_path)
+        data = self._upload_media(
+            FILE_UPLOAD_URL,
+            file_path,
+            "file",
+            {"file_type": "stream", "file_name": filename},
+        )
         file_key = str(data.get("file_key") or "")
         if not file_key:
             raise FeishuPermanentError("飞书文件上传返回数据不完整。")

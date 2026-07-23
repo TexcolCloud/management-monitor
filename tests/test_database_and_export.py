@@ -24,7 +24,7 @@ from database.postgres_store import (
     prepare_records,
     rows_by_create_time,
 )
-from data_export.daily_management_excel import table_rows, validate_sheet_name, write_xlsx
+from data_export.daily_management_excel import HEADERS, table_rows, validate_sheet_name, write_xlsx
 
 
 class DatabaseAndExportTest(unittest.TestCase):
@@ -182,9 +182,42 @@ class DatabaseAndExportTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 load_rows(input_path)
 
-    def test_excel_company_name_uses_classifier_normalization(self) -> None:
-        exported = table_rows([{"companyName": "示例分公司｜城区分公司"}])
-        self.assertEqual(exported[0][1], "城区分公司")
+    def test_excel_company_name_preserves_the_portal_value(self) -> None:
+        company_name = "示例分公司/宜都市分公司"
+        exported = table_rows([{"companyName": company_name}])
+        self.assertEqual(exported[0][1], company_name)
+
+    def test_excel_columns_match_the_requested_work_order_format(self) -> None:
+        row = {
+            "safetyCode": "CODE-1",
+            "companyName": "示例分公司/宜都市分公司",
+            "safetyType": "日常管理",
+            "theme": "现场检查",
+            "createBy": "张三",
+            "createTime": "2026-07-23 15:20:00",
+        }
+        expected_headers = ["单据编号", "单位名称", "类型", "主题", "创建人", "创建时间"]
+        self.assertEqual(HEADERS, expected_headers)
+        self.assertNotIn("操作", HEADERS)
+        self.assertEqual(
+            table_rows([row]),
+            [["CODE-1", "示例分公司/宜都市分公司", "日常管理", "现场检查", "张三", "2026-07-23 15:20:00"]],
+        )
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output = Path(temp_dir) / "result.xlsx"
+            write_xlsx(output, "日常管理", table_rows([row]))
+            workbook = load_workbook(output, data_only=False)
+            try:
+                sheet = workbook.active
+                self.assertEqual(
+                    [cell.value for cell in sheet[1]],
+                    expected_headers,
+                )
+                self.assertEqual(sheet.max_column, len(expected_headers))
+                self.assertEqual(sheet["A1"].alignment.horizontal, "left")
+            finally:
+                workbook.close()
 
     def test_parse_create_time_supports_timezone(self) -> None:
         source = "2026-07-21T10:00:00+08:00"

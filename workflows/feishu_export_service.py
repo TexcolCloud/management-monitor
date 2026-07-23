@@ -286,6 +286,7 @@ class FeishuExportService:
 def start_feishu_export_listener(logger: logging.Logger = LOGGER) -> threading.Thread | None:
     service = FeishuExportService.from_environment(logger)
     if not service.enabled:
+        logger.info("飞书 Excel 导出监听器未启动：FEISHU_EXPORT_ENABLED=false")
         return None
     try:
         import lark_oapi  # noqa: F401

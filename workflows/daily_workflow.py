@@ -27,7 +27,7 @@ LOGGER = logging.getLogger("workorder_daily_manage")
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="数据库为空时自动获取最近 30 天日常管理数据并导出 Excel 表格。"
+        description="获取最近 30 天日常管理数据并持续监听新工单。"
     )
     parser.add_argument("--capture-out", type=Path, default=None, help="数据抓取输出目录。")
     parser.add_argument("--capture-root", type=Path, default=DEFAULT_CAPTURE_ROOT)
@@ -48,12 +48,22 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--skip-attachments", action="store_true")
     parser.add_argument("--keep-existing-attachments", action="store_true")
     parser.add_argument("--export-root", type=Path, default=None)
-    parser.add_argument("--excel-out", type=Path, default=None, help="完整 Excel 输出文件路径。")
+    parser.add_argument(
+        "--excel-out",
+        type=Path,
+        default=None,
+        help="与 --export-current 一起使用时的本地 Excel 输出文件路径。",
+    )
     parser.add_argument("--sheet-name", default="")
+    parser.add_argument(
+        "--export-current",
+        action="store_true",
+        help="显式从当前完整快照生成本地 Excel；默认仅在飞书请求时生成并私发。",
+    )
     parser.add_argument(
         "--skip-export",
         action="store_true",
-        help="只执行数据获取，不导出 Excel。用于排查问题。",
+        help="兼容旧参数；默认不生成本地 Excel。与 --export-current 同时使用时跳过本地导出。",
     )
     return parser.parse_args()
 
@@ -232,8 +242,10 @@ def main() -> None:
 
         logger.info("最近三十天表单和附件均完整: %s", data_dir)
 
-        if not args.skip_export:
+        if args.export_current and not args.skip_export:
             run_command(build_export_command(args, data_dir), "表格导出", LOGGER)
+        else:
+            logger.info("初始化不生成本地 Excel，等待飞书导出请求")
         logger.info("初始化完成，开始常驻监听新工单")
         run_command(
             build_monitor_command(args, reuse_login=True, browser_bridge_url=browser_bridge_url),

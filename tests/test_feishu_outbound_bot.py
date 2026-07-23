@@ -93,6 +93,34 @@ class FeishuOutboundBotTest(unittest.TestCase):
         self.assertEqual(payload["msg_type"], "image")
         self.assertEqual(json.loads(payload["content"])["image_key"], "img_123")
 
+    def test_send_file_uploads_explicit_excel_filename(self) -> None:
+        bot = FeishuOutboundBot("app-id", "app-secret", "chat-id")
+        bot._tenant_access_token = "token"
+        bot._token_expires_at = 2_000_000_000
+        with tempfile.TemporaryDirectory() as temp_dir:
+            export = Path(temp_dir) / "daily-management-export.xlsx"
+            export.write_bytes(b"xlsx-content")
+            with patch("common.feishu_app_bot.time.time", return_value=1_700_000_000), patch(
+                "common.feishu_app_bot.urllib.request.urlopen",
+                side_effect=[
+                    response_context({"code": 0, "data": {"file_key": "file_123"}}),
+                    response_context({"code": 0}),
+                ],
+            ) as urlopen:
+                bot.send_file(str(export))
+
+        upload_request = urlopen.call_args_list[0].args[0]
+        message_request = urlopen.call_args_list[1].args[0]
+        payload = json.loads(message_request.data.decode("utf-8"))
+        self.assertIn(b'name="file_name"\r\n\r\ndaily-management-export.xlsx\r\n', upload_request.data)
+        self.assertIn(b'filename="daily-management-export.xlsx"', upload_request.data)
+        self.assertIn(
+            b"Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            upload_request.data,
+        )
+        self.assertEqual(payload["msg_type"], "file")
+        self.assertEqual(json.loads(payload["content"])["file_key"], "file_123")
+
     def test_network_failure_retries_with_injected_sleep(self) -> None:
         sleep = Mock()
         bot = FeishuOutboundBot(

@@ -19,13 +19,13 @@ flowchart TD
     D --> F["Node 附件下载子进程"]
     D --> G["文件快照 current / partial-attempts"]
     A --> H["PostgreSQL upsert"]
-    A --> I["Excel 文件"]
     A --> J["Python 常驻监听子进程"]
     J --> C
     J --> K["业务表 + 飞书 outbox"]
     J --> L["本地 JSON 检查点"]
     J --> M["飞书 REST 通知"]
     J --> N["飞书 SDK 长连接导出"]
+    N --> I["Excel 文件（仅飞书请求时）"]
 ```
 
 重构前已经具备分页总数校验、详情失败隔离、文件暂存、PostgreSQL upsert、飞书 outbox 和卡片/图片分段进度，但这些能力分别散落在 CLI、文件工具和基础设施模块中。核心业务判断直接读取文件、环境变量或数据库，难以离线验证。

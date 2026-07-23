@@ -21,13 +21,10 @@ from common.workflow_paths import (
     resolve_capture_data_dir,
     safe_slug,
 )
-from data_processing.classifier import DailyManagementClassifier
-
-
 LOGGER = logging.getLogger("workorder_daily_manage")
 DEFAULT_EXCEL_NAME = "daily-management-table-no-operation.xlsx"
 DEFAULT_EXPORT_ROOT = load_runtime_config().export_root
-HEADERS = ["单据编号", "单位名称", "归属单位", "类型", "归类", "风险等级", "主题", "创建人", "创建时间"]
+HEADERS = ["单据编号", "单位名称", "类型", "主题", "创建人", "创建时间"]
 FIELD_MAP = {
     "单据编号": "safetyCode",
     "单位名称": "companyName",
@@ -89,18 +86,13 @@ def validate_sheet_name(value: str) -> str:
 
 
 def table_rows(rows: list[dict]) -> list[list[str]]:
-    classifier = DailyManagementClassifier(project_path("config/classification_rules.json"))
     exported: list[list[str]] = []
     for row in rows:
-        classification = classifier.classify(row)
         exported.append(
             [
                 clean_text(row.get(FIELD_MAP["单据编号"])),
-                clean_text(classifier.normalize_company(row.get(FIELD_MAP["单位名称"]))),
-                clean_text(classification["归属单位"]),
+                clean_text(row.get(FIELD_MAP["单位名称"])),
                 clean_text(row.get(FIELD_MAP["类型"])),
-                clean_text(classification["归类"]),
-                clean_text(classification["风险等级"]),
                 clean_text(row.get(FIELD_MAP["主题"])),
                 clean_text(row.get(FIELD_MAP["创建人"])),
                 clean_text(row.get(FIELD_MAP["创建时间"])),
@@ -114,16 +106,16 @@ def style_worksheet(sheet: Worksheet) -> None:
     border = Border(left=thin, right=thin, top=thin, bottom=thin)
     header_fill = PatternFill("solid", fgColor="EDEFF3")
     for cell in sheet[1]:
-        cell.font = Font(name="Microsoft YaHei", size=11, bold=True)
+        cell.font = Font(name="Microsoft YaHei", size=11, bold=True, color="2F4969")
         cell.fill = header_fill
-        cell.alignment = Alignment(horizontal="center", vertical="center")
+        cell.alignment = Alignment(horizontal="left", vertical="center")
         cell.border = border
     for row in sheet.iter_rows(min_row=2):
         for cell in row:
             cell.font = Font(name="Microsoft YaHei", size=11)
             cell.alignment = Alignment(vertical="center")
             cell.border = border
-    widths = [24, 38, 24, 14, 18, 12, 38, 18, 22]
+    widths = [24, 38, 14, 38, 18, 22]
     for index, width in enumerate(widths, start=1):
         sheet.column_dimensions[get_column_letter(index)].width = width
     sheet.row_dimensions[1].height = 24

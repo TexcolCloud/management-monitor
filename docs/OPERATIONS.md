@@ -126,7 +126,8 @@ npm.cmd run workflow:daily
 3. 等待 `capture-output/daily-management/current/acquisition-run-summary.json` 生成，检查实际范围、
    列表、详情和附件统计。
 4. 确认 `partial-attempts/` 中的失败批次没有替换 `current/`。
-5. 核对业务表总数、`safety_code` 唯一性和最近数据；确认 Excel 可打开且行数合理。
+5. 核对业务表总数、`safety_code` 唯一性和最近数据；主流程默认不创建本地 Excel，按需通过
+   飞书自助导出验证文件可打开且行数合理。
 6. 确认 `workorder_monitor_checkpoints` 只在完整监听窗口提交后推进。
 7. 使用 `Ctrl+C` 停止一次，确认无无意义 Traceback，再重新启动验证恢复。
 

@@ -8,7 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from unittest.mock import patch
 
-from workflows.feishu_export_service import FeishuExportService, _enabled
+from workflows.feishu_export_service import FeishuExportService, _enabled, start_feishu_export_listener
 
 
 class FeishuExportServiceTest(unittest.TestCase):
@@ -96,6 +96,18 @@ class FeishuExportServiceTest(unittest.TestCase):
         with patch.dict(os.environ, environment, clear=True):
             service = FeishuExportService.from_environment()
         self.assertFalse(service.enabled)
+
+    def test_disabled_listener_reports_why_it_was_not_started(self) -> None:
+        logger = logging.getLogger("feishu-export-test")
+        with patch.dict(os.environ, {"FEISHU_EXPORT_ENABLED": "false"}, clear=True), patch.object(
+            logger, "info"
+        ) as log_info:
+            listener = start_feishu_export_listener(logger)
+
+        self.assertIsNone(listener)
+        log_info.assert_called_once_with(
+            "飞书 Excel 导出监听器未启动：FEISHU_EXPORT_ENABLED=false"
+        )
 
     def test_export_for_open_id_reads_rows_from_database(self) -> None:
         service = self.service()

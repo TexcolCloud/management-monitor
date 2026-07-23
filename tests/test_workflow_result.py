@@ -57,10 +57,11 @@ class WorkflowResultTest(unittest.TestCase):
         self.assertNotIn("--end", " ".join(command))
         self.assertNotIn("--last-days", " ".join(command))
 
-    def test_workflow_always_captures_recent_thirty_days_when_database_has_records(self) -> None:
+    def test_workflow_captures_recent_thirty_days_without_creating_local_excel(self) -> None:
         args = Namespace(
             skip_login=False,
-            skip_export=True,
+            skip_export=False,
+            export_current=False,
             capture_out=None,
             capture_root=Path("capture-output/daily-management"),
             page_size=None,
@@ -106,8 +107,56 @@ class WorkflowResultTest(unittest.TestCase):
             commands[0][2],
             {"WORKORDER_BROWSER_BRIDGE_TOKEN": "ephemeral-bridge-secret"},
         )
+        self.assertNotIn("表格导出", [label for _, label, _ in commands])
         self.assertEqual(commands[-1][1], "新工单监听")
         self.assertEqual(commands[-1][2], commands[0][2])
+
+    def test_workflow_generates_local_excel_only_when_explicitly_requested(self) -> None:
+        args = Namespace(
+            skip_login=True,
+            skip_export=False,
+            export_current=True,
+            capture_out=None,
+            capture_root=Path("capture-output/daily-management"),
+            page_size=None,
+            max_pages=None,
+            request_timeout=None,
+            retries=None,
+            max_detail_failures=None,
+            max_attachment_failures=None,
+            attachment_concurrency=None,
+            date_field="",
+            login_wait_ms=None,
+            no_login_replay=False,
+            skip_attachments=False,
+            keep_existing_attachments=False,
+            allow_partial=False,
+            request_start_field="",
+            request_end_field="",
+            export_root=None,
+            excel_out=None,
+            sheet_name="",
+        )
+        data_dir = Path(tempfile.gettempdir()) / "daily-workflow-data"
+        commands: list[str] = []
+
+        def run_command(command, label, _logger, *, env_overrides=None) -> None:
+            commands.append(label)
+            if label == "新工单监听":
+                raise KeyboardInterrupt
+
+        with patch("workflows.daily_workflow.parse_args", return_value=args), patch(
+            "workflows.daily_workflow.setup_logging"
+        ), patch(
+            "workflows.daily_workflow.acquired_data_dir", return_value=data_dir
+        ), patch(
+            "workflows.daily_workflow.capture_data_complete", return_value=True
+        ), patch("workflows.daily_workflow.attachments_complete", return_value=True), patch(
+            "workflows.daily_workflow.data_dir_records_complete", return_value=True
+        ), patch("workflows.daily_workflow.run_command", side_effect=run_command):
+            main()
+
+        self.assertEqual(commands, ["最近30天数据获取", "表格导出", "新工单监听"])
 
     def test_workflow_does_not_import_partial_capture(self) -> None:
         args = Namespace(
