@@ -134,8 +134,8 @@ def main() -> None:
             monitor = WorkOrderMonitor(simulation_monitor_args(temp_root / "monitor-state.json"), runtime, logger)
             if not monitor.feishu_bot.enabled:
                 raise RuntimeError("飞书联调需要配置 FEISHU_RECEIVE_ID 和飞书应用凭证。")
-            monitor._download_image_attachments = lambda _row, _data_dir: [
-                DownloadedImage("simulation-attachment.png", image_path)
+            monitor._download_attachments = lambda _row, _data_dir: [
+                DownloadedImage("simulation-attachment.png", image_path, "模拟附件")
             ]
 
             new_codes, upserted = monitor._store_rows([row])

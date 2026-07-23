@@ -15,6 +15,7 @@ from common.workflow_paths import PROJECT_ROOT
 from data_acquisition.capture_components import CaptureResult, CaptureService, CaptureStatistics
 from workflows.work_order_monitor import (
     BrowserSession,
+    DownloadedAttachment,
     DownloadedImage,
     MonitorState,
     WorkOrderMonitor,
@@ -166,7 +167,7 @@ class WorkOrderMonitorTest(unittest.TestCase):
             WorkOrderMonitor(args, load_runtime_config(), logging.getLogger("monitor-test"))
         load_env.assert_called_once()
 
-    def test_feishu_delivery_sends_only_unfinished_messages_after_image_failure(self) -> None:
+    def test_feishu_delivery_sends_only_unfinished_attachments_after_failure(self) -> None:
         with self.project_temp_dir() as temp_dir:
             root = Path(temp_dir)
             args = Namespace(
@@ -186,11 +187,12 @@ class WorkOrderMonitorTest(unittest.TestCase):
             row = {"safetyCode": "CODE-1", "dailySafetyFiles": [{"url": "attachments"}]}
             events: list[str] = []
 
-            def download_images(_row: dict, _data_dir: Path) -> list[DownloadedImage]:
+            def download_attachments(_row: dict, _data_dir: Path) -> list[DownloadedAttachment]:
                 events.append("download")
                 return [
-                    DownloadedImage("daily-attachments/one.png", root / "one.png"),
-                    DownloadedImage("daily-attachments/two.jpg", root / "two.jpg"),
+                    DownloadedImage("daily-attachments/one.png", root / "one.png", "会议通知"),
+                    DownloadedAttachment("daily-attachments/agenda.pdf", root / "agenda.pdf", "培训资料"),
+                    DownloadedImage("daily-attachments/two.jpg", root / "two.jpg", "培训照片"),
                 ]
 
             bot.send_work_order.side_effect = lambda _row: events.append("card")
@@ -218,6 +220,9 @@ class WorkOrderMonitorTest(unittest.TestCase):
                     if second_image_attempts == 1:
                         raise RuntimeError("temporary upload failure")
 
+            def send_file(path: str) -> None:
+                events.append(f"file:{Path(path).name}")
+
             def mark_card(*_args) -> None:
                 state["card"] = True
                 events.append("mark-card")
@@ -227,11 +232,13 @@ class WorkOrderMonitorTest(unittest.TestCase):
                 events.append(f"mark-image:{Path(args[1]).name}")
 
             bot.send_image.side_effect = send_image
+            bot.send_file.side_effect = send_file
+            bot.send_text.side_effect = lambda text: events.append(f"type:{text}")
             outbox.claim_due.side_effect = pending_rows
             outbox.mark_card_sent.side_effect = mark_card
             outbox.mark_image_sent.side_effect = mark_image
             outbox.mark_sent.side_effect = lambda *_args: events.append("mark")
-            with patch.object(monitor, "_download_image_attachments", side_effect=download_images):
+            with patch.object(monitor, "_download_attachments", side_effect=download_attachments):
                 self.assertEqual(monitor._deliver_feishu_notifications(), (0, 1))
                 self.assertEqual(monitor._deliver_feishu_notifications(), (1, 0))
 
@@ -241,18 +248,26 @@ class WorkOrderMonitorTest(unittest.TestCase):
                     "download",
                     "card",
                     "mark-card",
+                    "type:【附件类型】 会议通知",
                     "image:one.png",
                     "mark-image:one.png",
+                    "type:【附件类型】 培训资料",
+                    "file:agenda.pdf",
+                    "mark-image:agenda.pdf",
+                    "type:【附件类型】 培训照片",
                     "image:two.jpg",
                     "download",
+                    "type:【附件类型】 培训照片",
                     "image:two.jpg",
                     "mark-image:two.jpg",
                     "mark",
                 ],
             )
             self.assertEqual(bot.send_work_order.call_count, 1)
+            self.assertEqual(bot.send_text.call_count, 4)
             self.assertEqual(bot.send_image.call_args_list[0].args[0], str(root / "one.png"))
             self.assertEqual(bot.send_image.call_args_list[2].args[0], str(root / "two.jpg"))
+            bot.send_file.assert_called_once_with(str(root / "agenda.pdf"))
             outbox.mark_sent.assert_called_once()
             outbox.record_failure.assert_called_once()
 

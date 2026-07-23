@@ -35,6 +35,7 @@ from safety_monitor.adapters.postgres import (
     PostgresOutboxRepository,
 )
 from safety_monitor.adapters.feishu_notifications import (
+    DownloadedAttachment,
     DownloadedImage,
     FeishuOutboxDispatcher,
 )
@@ -361,11 +362,11 @@ class WorkOrderMonitor:
             connection.close()
         return new_codes, upserted
 
-    def _download_image_attachments(
+    def _download_attachments(
         self,
         row: dict[str, Any],
         data_dir: Path,
-    ) -> list[DownloadedImage]:
+    ) -> list[DownloadedAttachment]:
         data_dir.mkdir(parents=True, exist_ok=True)
         details_file = data_dir / "management-api-details.json"
         details_file.write_text(
@@ -378,7 +379,6 @@ class WorkOrderMonitor:
             f"--data-dir={data_dir}",
             f"--token-source={ensure_inside_project(project_path(self.args.token_source))}",
             f"--headers-file={ensure_inside_project(project_path(self.args.headers_file))}",
-            "--images-only",
             "--max-failures=0",
             f"--timeout-ms={self.runtime.attachment_timeout_ms}",
             f"--retries={self.runtime.attachment_retries}",
@@ -392,7 +392,7 @@ class WorkOrderMonitor:
             }
         run_command(
             command,
-            "download Feishu image attachments",
+            "download Feishu attachments",
             self.logger,
             env_overrides=bridge_environment,
         )
@@ -402,15 +402,15 @@ class WorkOrderMonitor:
             manifest = json.loads(manifest_file.read_text(encoding="utf-8"))
             entries = manifest.get("rows", []) if isinstance(manifest, dict) else []
         except (OSError, json.JSONDecodeError) as exc:
-            raise RuntimeError("Feishu image attachment manifest is unavailable") from exc
+            raise RuntimeError("Feishu attachment manifest is unavailable") from exc
         if not isinstance(entries, list):
-            raise RuntimeError("Feishu image attachment manifest rows are invalid")
+            raise RuntimeError("Feishu attachment manifest rows are invalid")
 
         attachment_root = (data_dir / self.runtime.attachment_dir_name).resolve()
-        images: list[DownloadedImage] = []
+        attachments: list[DownloadedAttachment] = []
         successful_statuses = {"downloaded", "reused", "skipped_duplicate"}
         for entry in entries:
-            if not isinstance(entry, dict) or not entry.get("isImage"):
+            if not isinstance(entry, dict):
                 continue
             if str(entry.get("status") or "") not in successful_statuses:
                 continue
@@ -419,18 +419,34 @@ class WorkOrderMonitor:
             try:
                 candidate.relative_to(attachment_root)
             except ValueError as exc:
-                raise RuntimeError("Feishu image attachment path is outside the download directory") from exc
+                raise RuntimeError("Feishu attachment path is outside the download directory") from exc
             if not candidate.is_file():
-                raise RuntimeError("Feishu image attachment file is missing")
-            images.append(DownloadedImage(saved_path=saved_path, path=candidate))
-        return images
+                raise RuntimeError("Feishu attachment file is missing")
+            attachment_type = str(entry.get("fileLabel") or entry.get("fileType") or "附件").strip()
+            attachment_class = DownloadedImage if bool(entry.get("isImage")) else DownloadedAttachment
+            attachments.append(
+                attachment_class(
+                    saved_path=saved_path,
+                    path=candidate,
+                    attachment_type=attachment_type or "附件",
+                )
+            )
+        return attachments
+
+    # Retained for local scripts that used the older private helper name.
+    def _download_image_attachments(
+        self,
+        row: dict[str, Any],
+        data_dir: Path,
+    ) -> list[DownloadedAttachment]:
+        return self._download_attachments(row, data_dir)
 
     def _deliver_feishu_notifications(self) -> tuple[int, int]:
         dispatcher = FeishuOutboxDispatcher(
             bot=self.feishu_bot,
             outbox=self._notification_outbox(),
             worker_id=self._outbox_worker_id,
-            download_images=self._download_image_attachments,
+            download_attachments=self._download_attachments,
             temp_root=self.state_path.parent,
             logger=self.logger,
         )

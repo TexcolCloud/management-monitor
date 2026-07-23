@@ -313,23 +313,19 @@ class FeishuOutboundBot:
             raise FeishuPermanentError("飞书文件上传返回数据不完整。")
         return file_key
 
-    def message_card(self, row: Mapping[str, Any]) -> dict[str, Any]:
-        fields = [
-            {"is_short": True, "text": {"tag": "lark_md", "content": f"**工单编号**\n{_text(row.get('safetyCode')) or '-'}"}},
-            {"is_short": True, "text": {"tag": "lark_md", "content": f"**创建时间**\n{_text(row.get('createTime')) or '-'}"}},
-            {"is_short": True, "text": {"tag": "lark_md", "content": f"**单位**\n{_text(row.get('companyName')) or '-'}"}},
-            {"is_short": True, "text": {"tag": "lark_md", "content": f"**类型**\n{_text(row.get('safetyType')) or '-'}"}},
-        ]
-        return {
-            "header": {"title": {"tag": "plain_text", "content": "新安全管理工单"}, "template": "red"},
-            "elements": [
-                {"tag": "div", "fields": fields},
-                {"tag": "div", "text": {"tag": "lark_md", "content": f"**主题**\n{_text(row.get('theme')) or '-'}"}},
-            ],
-        }
+    @staticmethod
+    def work_order_text(row: Mapping[str, Any]) -> str:
+        return "\n".join(
+            [
+                f"【工单编号】 {_text(row.get('safetyCode')) or '-'}",
+                f"【所属班组】 {_text(row.get('companyName')) or '-'}",
+                f"【工单主题】 {_text(row.get('theme')) or '-'}",
+                f"【创建时间】 {_text(row.get('createTime')) or '-'}",
+            ]
+        )
 
     def send_work_order(self, row: Mapping[str, Any]) -> None:
-        self._send_message("interactive", self.message_card(row))
+        self._send_message("text", {"text": self.work_order_text(row)})
 
     def send_interactive_card(self, card: Mapping[str, Any]) -> None:
         self._send_message("interactive", card)

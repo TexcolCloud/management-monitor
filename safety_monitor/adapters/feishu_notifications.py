@@ -11,9 +11,18 @@ from safety_monitor.ports.repositories import NotificationOutboxRepository
 
 
 @dataclass(frozen=True)
-class DownloadedImage:
+class DownloadedAttachment:
     saved_path: str
     path: Path
+    attachment_type: str = "附件"
+    is_image: bool = False
+
+
+@dataclass(frozen=True)
+class DownloadedImage(DownloadedAttachment):
+    """Compatibility type for callers that know an attachment is an image."""
+
+    is_image: bool = True
 
 
 class OutboundBot(Protocol):
@@ -21,10 +30,16 @@ class OutboundBot(Protocol):
 
     def send_work_order(self, row: dict[str, Any]) -> None: ...
 
+    def send_text(self, text: str) -> None: ...
+
     def send_image(self, path: str) -> None: ...
 
+    def send_file(self, path: str) -> None: ...
 
-ImageDownloader = Callable[[dict[str, Any], Path], list[DownloadedImage]]
+
+AttachmentDownloader = Callable[[dict[str, Any], Path], list[DownloadedAttachment]]
+# Retained for integrations written before notifications supported non-image files.
+ImageDownloader = AttachmentDownloader
 
 
 class FeishuOutboxDispatcher:
@@ -36,14 +51,14 @@ class FeishuOutboxDispatcher:
         bot: OutboundBot,
         outbox: NotificationOutboxRepository,
         worker_id: str,
-        download_images: ImageDownloader,
+        download_attachments: AttachmentDownloader,
         temp_root: Path,
         logger: logging.Logger,
     ) -> None:
         self.bot = bot
         self.outbox = outbox
         self.worker_id = worker_id
-        self.download_images = download_images
+        self.download_attachments = download_attachments
         self.temp_root = temp_root
         self.logger = logger
 
@@ -62,21 +77,25 @@ class FeishuOutboxDispatcher:
             try:
                 self.temp_root.mkdir(parents=True, exist_ok=True)
                 with tempfile.TemporaryDirectory(
-                    prefix="feishu-image-attachments-",
+                    prefix="feishu-attachments-",
                     dir=self.temp_root,
                 ) as temp_dir:
-                    images = self.download_images(row, Path(temp_dir))
+                    attachments = self.download_attachments(row, Path(temp_dir))
                     if not notification.card_sent:
                         self.bot.send_work_order(row)
                         self.outbox.mark_card_sent(safety_code, self.worker_id)
                     sent_image_paths = set(notification.sent_image_paths)
-                    for image in images:
-                        if image.saved_path in sent_image_paths:
+                    for attachment in attachments:
+                        if attachment.saved_path in sent_image_paths:
                             continue
-                        self.bot.send_image(str(image.path))
+                        self.bot.send_text(f"【附件类型】 {attachment.attachment_type or '附件'}")
+                        if attachment.is_image:
+                            self.bot.send_image(str(attachment.path))
+                        else:
+                            self.bot.send_file(str(attachment.path))
                         self.outbox.mark_image_sent(
                             safety_code,
-                            image.saved_path,
+                            attachment.saved_path,
                             self.worker_id,
                         )
             except Exception as exc:

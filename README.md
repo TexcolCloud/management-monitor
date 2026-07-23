@@ -58,6 +58,7 @@ npm.cmd run check
 | `npm.cmd run workflow:daily` | 30 天初始化采集、原子快照、PostgreSQL 入库、持续监听；启用时同时启动飞书导出监听 | 是：门户、PostgreSQL；按配置访问飞书 |
 | `npm.cmd run feishu:export-listener` | 单独启动飞书 SDK 长连接 Excel 导出服务；不要与同一实例的主工作流重复启动 | 是：PostgreSQL、飞书 |
 | `npm.cmd run feishu:simulation` | 显式真实联调；使用随机测试表、模拟工单和模拟图片，输入“结束”或按 `Ctrl+C` 清理 | 是：隔离 PostgreSQL 测试表、飞书 |
+| `npm.cmd run feishu:latest-notification` | 显式读取最新完整快照，将最新工单按文本、附件类型、图片和原始文件通知样式发送到 `FEISHU_RECEIVE_ID`；不写入数据库或 outbox | 是：飞书 |
 | `npm.cmd run check` | 语法检查及 Python/Node 离线测试 | 否；测试使用临时目录、mock/fake，不登录门户、不发真实消息、不修改正式数据库 |
 
 首次部署应先运行离线检查：
