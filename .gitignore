@@ -1,0 +1,89 @@
+# Dependencies and local environments
+node_modules/
+.npm/
+.pnpm-store/
+.venv/
+venv/
+env/
+ENV/
+.conda/
+
+# Python bytecode, tooling and build output
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.pyright/
+.ruff_cache/
+.tox/
+.nox/
+.ipynb_checkpoints/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+*.egg-info/
+pip-wheel-metadata/
+build/
+dist/
+
+# Runtime output and captured data
+capture-output/
+excel-output/
+.temp/
+tmp-validation/
+
+# Secrets and local auth/session snapshots
+.env
+.env.*
+!.env.example
+auth-token.json
+storage-state*.json
+portal-storage-state.json
+portal-click-trace.json
+daily-management-request.json
+filter-request-*.json
+browser-session-*.json
+daily-acquisition-state.json
+work-order-monitor-state.json
+config/*.local.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.pid
+*.pid.lock
+*.stackdump
+
+# Playwright reports
+playwright-report/
+test-results/
+blob-report/
+
+# Local editor and agent state
+.idea/
+.vscode/
+.vs/
+.fleet/
+.history/
+.agents
+
+# Editor and filesystem temporary files
+*.swp
+*.swo
+*.tmp
+*.temp
+*.bak
+*~
+
+# OS files
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini

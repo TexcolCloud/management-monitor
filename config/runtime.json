@@ -1,0 +1,40 @@
+{
+  "api": {
+    "list_url": "https://api.example.invalid/work-orders",
+    "detail_url": "https://api.example.invalid/work-orders",
+    "attachment_download_url": "https://api.example.invalid/attachments/download"
+  },
+  "portal": {
+    "login_url": "https://portal.example.invalid/login",
+    "login_wait_ms": 300000,
+    "post_login_settle_ms": 5000,
+    "replay_click_delay_ms": 800,
+    "replay_step_timeout_ms": 12000
+  },
+  "network": {
+    "request_timeout_seconds": 60,
+    "request_retries": 3,
+    "retryable_api_codes": [408, 429, 500, 502, 503, 504],
+    "detail_max_failures": 0,
+    "retry_backoff_seconds": 1,
+    "attachment_timeout_ms": 60000,
+    "attachment_retries": 3,
+    "attachment_concurrency": 3,
+    "attachment_max_failures": 0
+  },
+  "pagination": {
+    "page_size": 100,
+    "max_pages": 1000,
+    "stop_on_empty_page": true,
+    "validate_total": true
+  },
+  "paths": {
+    "capture_root": "capture-output/daily-management",
+    "export_root": "excel-output",
+    "headers_file": "capture-output/daily-management/daily-management-request.json",
+    "token_source_dir": "capture-output/daily-management",
+    "attachment_dir_name": "daily-attachments",
+    "login_profile_dir": ".temp/daily-management-login-profile",
+    "login_navigation_file": "data_acquisition/recordings/portal-navigation-script.json"
+  }
+}

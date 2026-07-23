@@ -1,0 +1,22 @@
+{
+  "name": "management-monitor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "scripts": {
+    "workflow:daily": "python run_daily_workflow.py",
+    "feishu:export-listener": "python -m workflows.feishu_export_service",
+    "feishu:simulation": "python -m workflows.feishu_simulation",
+    "record:portal-clicks": "node data_acquisition/record-portal-clicks.js",
+    "record:portal-navigation": "node data_acquisition/record-portal-clicks.js --save-replay-file=data_acquisition/recordings/portal-navigation-script.json --freeze-replay-file --require-token --require-request --stop-on-request",
+    "test": "python -m unittest discover -s tests -v && node tests/test-common-runtime.js && node tests/test-portal-window.js && node tests/test-attachment-download.js",
+    "check": "node --check common/auth-runtime.js && node --check common/company-normalization.js && node --check common/runtime-config.js && node --check data_acquisition/download-daily-attachments.js && node --check data_acquisition/record-portal-clicks.js && node --check tests/test-common-runtime.js && node --check tests/test-portal-window.js && node --check tests/test-attachment-download.js && python -m compileall -q common data_acquisition data_export data_processing database safety_monitor workflows run_daily_workflow.py tests && python -m unittest discover -s tests -v && node tests/test-common-runtime.js && node tests/test-portal-window.js && node tests/test-attachment-download.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "playwright": "^1.61.1"
+  }
+}
