@@ -160,7 +160,7 @@ function loadRuntimeConfig(configFile = process.env.WORKORDER_CONFIG || DEFAULT_
         payload,
         'paths',
         'login_navigation_file',
-        path.join('data_acquisition', 'recordings', 'portal-navigation-script.json')
+        path.join('data_acquisition', 'recordings', 'portal-navigation.local.json')
       )
     )
   };

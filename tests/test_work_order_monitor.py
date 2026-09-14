@@ -276,7 +276,7 @@ class WorkOrderMonitorTest(unittest.TestCase):
             root = Path(temp_dir)
             args = Namespace(
                 login_profile_dir=root / "profile",
-                login_navigation_file=Path("data_acquisition/recordings/portal-navigation-script.json"),
+                login_navigation_file=Path("data_acquisition/recordings/portal-navigation.local.json"),
                 token_source=Path("capture-output/daily-management"),
                 headers_file=Path("capture-output/daily-management/daily-management-request.json"),
                 login_wait_ms=1,

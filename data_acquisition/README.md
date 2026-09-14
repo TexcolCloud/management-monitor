@@ -24,7 +24,7 @@ npm.cmd run workflow:daily
 - `download-daily-attachments.js`：流式附件下载、哈希、重试和复用。
 - `run_summary.py`：批次摘要。
 - `record-portal-clicks.js`：Playwright 登录、跳转和本机请求桥。
-- `recordings/portal-navigation-script.json`：可分发的点击路径，不含账号或会话凭证。
+- `recordings/portal-navigation.local.json`：仅限本机的导航录制，已加入 Git 忽略规则；分发时只提供空白 example 文件。
 
 ## 会话与认证
 

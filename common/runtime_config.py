@@ -325,7 +325,7 @@ def load_runtime_config(config_file: Path | str | None = None) -> RuntimeConfig:
                     payload,
                     "paths",
                     "login_navigation_file",
-                    "data_acquisition/recordings/portal-navigation-script.json",
+                    "data_acquisition/recordings/portal-navigation.local.json",
                 ),
             ),
         ),

@@ -48,6 +48,11 @@ browser-session-*.json
 daily-acquisition-state.json
 work-order-monitor-state.json
 config/*.local.json
+data_acquisition/recordings/*.local.json
+private-data/
+*.pem
+*.key
+*.p12
 
 # Logs
 logs/

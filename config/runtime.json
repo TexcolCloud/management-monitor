@@ -35,6 +35,6 @@
     "token_source_dir": "capture-output/daily-management",
     "attachment_dir_name": "daily-attachments",
     "login_profile_dir": ".temp/daily-management-login-profile",
-    "login_navigation_file": "data_acquisition/recordings/portal-navigation-script.json"
+    "login_navigation_file": "data_acquisition/recordings/portal-navigation.local.json"
   }
 }

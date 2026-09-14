@@ -36,12 +36,13 @@ LEGACY_001_CHECKSUMS = (
 
 
 class MigrationSafetyTest(unittest.TestCase):
-    def test_original_migration_files_are_byte_for_byte_unchanged(self) -> None:
+    def test_sanitized_migration_baseline_is_unchanged(self) -> None:
         root = Path(__file__).parents[1] / "database" / "migrations"
+        # Frozen baseline for the sanitized edition; not an upgrade of the original deployment.
         expected = {
-            "001_initial.sql": "eea683f27f145fcb6289497e544bdddd8b561ffbf05083ff4b6f9c478cd3eb7b",
-            "002_feishu_notification_outbox.sql": "d718d2684692b2786e12b8a08f20e7843e8f1d217121ce978fc8f884214410fc",
-            "003_feishu_notification_delivery_progress.sql": "31c9cfffbe3a1b1705a04bff24b10338d58efb9e06a02afab545a8626335664d",
+            "001_initial.sql": "b151d59cc5c432356edec47b048f29b141c9bbf116a10a1ef61554b8311bd876",
+            "002_feishu_notification_outbox.sql": "4bf2f7ef7f6f3ca7f6bf2ceb8383c16dd8059cdd3014c8beab7b7acd42e5e952",
+            "003_feishu_notification_delivery_progress.sql": "d68b78ad47db3300b533126d66d8fdde01257bec69a1d559a8a67296adadcfd4",
             "004_create_time_index.sql": "7318d7457e079827cea192156f809dc71ff8428dc91ff8a06b607d92acc9d337",
         }
         actual = {
