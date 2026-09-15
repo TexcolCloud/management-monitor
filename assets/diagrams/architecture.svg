@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1640" height="1260" viewBox="0 0 1640 1260" role="img" aria-labelledby="title desc">
+<title id="title">管理监控 · 组件与依赖架构</title><desc id="desc">范围：当前实际运行组件与直接依赖；矩形标注职责，箭头标注调用方向与协议；全部连接线为水平或垂直线段。可放大阅读。</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L8 4 L0 8 Z" fill="#516477"/></marker></defs>
+<g font-family="Microsoft YaHei, Noto Sans CJK SC, PingFang SC, sans-serif">
+<rect x="0" y="0" width="1640" height="1260" fill="#ffffff" stroke="#ffffff" stroke-width="1.6"/>
+<text x="40" y="58" font-size="34" fill="#16324a" text-anchor="start" font-weight="700">管理监控 · 组件与依赖架构</text>
+<text x="40" y="94" font-size="19" fill="#516477" text-anchor="start">范围：当前实际运行组件与直接依赖；矩形标注职责，箭头标注调用方向与协议</text>
+<text x="40" y="132" font-size="18" fill="#516477" text-anchor="start">图例：实线＝调用 / 写入方向   虚线边框＝运行边界   下栏＝存储与依赖说明</text>
+<rect x="40" y="180" width="1020" height="750" fill="#fafcfe" stroke="#aabac9" stroke-width="1.6" stroke-dasharray="7 5"/>
+<text x="60" y="216" font-size="24" fill="#16324a" text-anchor="start" font-weight="700">本地应用</text>
+<rect x="1120" y="180" width="480" height="750" fill="#fafcfe" stroke="#aabac9" stroke-width="1.6" stroke-dasharray="7 5"/>
+<text x="1140" y="216" font-size="24" fill="#16324a" text-anchor="start" font-weight="700">外部服务</text>
+<rect x="70" y="275" width="370" height="140" fill="#f4f8fc" stroke="#255f91" stroke-width="1.6"/>
+<rect x="70" y="275" width="5" height="140" fill="#255f91" stroke="#255f91" stroke-width="1.6"/>
+<text x="88" y="307" font-size="24" fill="#255f91" text-anchor="start" font-weight="700">CLI / 工作流编排</text>
+<text x="88" y="338" font-size="19" fill="#516477" text-anchor="start">daily_workflow / work_order_monitor</text>
+<text x="88" y="364" font-size="19" fill="#516477" text-anchor="start">初始化、监听周期及子进程生命周期</text>
+<rect x="620" y="275" width="370" height="140" fill="#f4f8fc" stroke="#255f91" stroke-width="1.6"/>
+<rect x="620" y="275" width="5" height="140" fill="#255f91" stroke="#255f91" stroke-width="1.6"/>
+<text x="638" y="307" font-size="24" fill="#255f91" text-anchor="start" font-weight="700">Node.js / Playwright</text>
+<text x="638" y="338" font-size="19" fill="#516477" text-anchor="start">人工登录后的浏览器会话</text>
+<text x="638" y="364" font-size="19" fill="#516477" text-anchor="start">本地回环请求桥；临时凭据</text>
+<rect x="1150" y="275" width="370" height="140" fill="#f4f8fc" stroke="#255f91" stroke-width="1.6"/>
+<rect x="1150" y="275" width="5" height="140" fill="#255f91" stroke="#255f91" stroke-width="1.6"/>
+<text x="1168" y="307" font-size="24" fill="#255f91" text-anchor="start" font-weight="700">获准访问的工单门户</text>
+<text x="1168" y="338" font-size="19" fill="#516477" text-anchor="start">登录、列表、详情与附件 API</text>
+<text x="1168" y="364" font-size="19" fill="#516477" text-anchor="start">请求与响应需按目标系统适配</text>
+<rect x="70" y="560" width="370" height="140" fill="#f4f8fc" stroke="#255f91" stroke-width="1.6"/>
+<rect x="70" y="560" width="5" height="140" fill="#255f91" stroke="#255f91" stroke-width="1.6"/>
+<text x="88" y="592" font-size="24" fill="#255f91" text-anchor="start" font-weight="700">应用用例与领域规则</text>
+<text x="88" y="623" font-size="19" fill="#516477" text-anchor="start">Acquisition / Monitor / Export</text>
+<text x="88" y="649" font-size="19" fill="#516477" text-anchor="start">完整性、窗口、分类及导出权限</text>
+<rect x="620" y="560" width="370" height="140" fill="#f4f8fc" stroke="#255f91" stroke-width="1.6"/>
+<rect x="620" y="560" width="5" height="140" fill="#255f91" stroke="#255f91" stroke-width="1.6"/>
+<text x="638" y="592" font-size="24" fill="#255f91" text-anchor="start" font-weight="700">持久化 / 通知适配器</text>
+<text x="638" y="623" font-size="19" fill="#516477" text-anchor="start">PostgreSQL Unit of Work / Outbox</text>
+<text x="638" y="649" font-size="19" fill="#516477" text-anchor="start">飞书机器人与长连接导出入口</text>
+<rect x="1150" y="560" width="370" height="140" fill="#f4f8fc" stroke="#255f91" stroke-width="1.6"/>
+<rect x="1150" y="560" width="5" height="140" fill="#255f91" stroke="#255f91" stroke-width="1.6"/>
+<text x="1168" y="592" font-size="24" fill="#255f91" text-anchor="start" font-weight="700">PostgreSQL</text>
+<text x="1168" y="623" font-size="19" fill="#516477" text-anchor="start">工单、迁移与监听检查点</text>
+<text x="1168" y="649" font-size="19" fill="#516477" text-anchor="start">Outbox、租约及投递进度</text>
+<polyline points="440,345 620,345" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="448" y="309" width="159.51999999999998" height="25" fill="#fff" stroke="#fff" stroke-width="1.6"/>
+<text x="455" y="325" font-size="17" fill="#516477" text-anchor="start">启动 / 本地 HTTP</text>
+<polyline points="990,345 1150,345" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="991" y="309" width="62.449999999999996" height="25" fill="#fff" stroke="#fff" stroke-width="1.6"/>
+<text x="998" y="325" font-size="17" fill="#516477" text-anchor="start">HTTPS</text>
+<polyline points="255,415 255,560" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="263" y="472" width="149.82999999999998" height="25" fill="#fff" stroke="#fff" stroke-width="1.6"/>
+<text x="270" y="488" font-size="17" fill="#516477" text-anchor="start">Python 用例调用</text>
+<polyline points="440,630 620,630" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="448" y="594" width="128.07" height="25" fill="#fff" stroke="#fff" stroke-width="1.6"/>
+<text x="455" y="610" font-size="17" fill="#516477" text-anchor="start">端口 / 适配器</text>
+<polyline points="990,630 1150,630" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="996" y="594" width="86.75999999999999" height="25" fill="#fff" stroke="#fff" stroke-width="1.6"/>
+<text x="1003" y="610" font-size="17" fill="#516477" text-anchor="start">SQL 事务</text>
+<rect x="40" y="975" width="1560" height="235" fill="#f6f8fb" stroke="#cad5df" stroke-width="1.6"/>
+<text x="60" y="1015" font-size="24" fill="#16324a" text-anchor="start" font-weight="700">持久化与实现边界</text>
+<text x="60" y="1060" font-size="20" fill="#516477" text-anchor="start">门户采集：用例通过会话桥访问门户；Python 与 Node 共享运行配置，不向浏览器传递数据库 / 飞书凭据。</text>
+<text x="60" y="1094" font-size="20" fill="#516477" text-anchor="start">飞书依赖：通知适配器通过 HTTPS 发送消息；lark-oapi 长连接接收导出事件，无需公网回调。</text>
+<text x="60" y="1128" font-size="20" fill="#516477" text-anchor="start">本地文件：capture-output 保存批次 / 附件 / current；excel-output 保存导出；logs 与 .temp 保存运行诊断。</text>
+<text x="60" y="1162" font-size="20" fill="#516477" text-anchor="start">事务边界：增量工单、通知入队与检查点共同提交；远端消息发送独立于数据库事务。</text>
+<rect x="1150" y="765" width="370" height="130" fill="#f7f8fa" stroke="#255f91"/>
+<text x="1168" y="798" font-size="24" fill="#255f91" font-weight="700">飞书开放平台</text>
+<text x="1168" y="833" font-size="19" fill="#516477">应用机器人 / SDK 长连接事件</text>
+<text x="1168" y="861" font-size="19" fill="#516477">通知与私信 Excel</text>
+<polyline points="805,700 805,830 1150,830" fill="none" stroke="#516477" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="830" y="812" font-size="17" fill="#516477">HTTPS / 长连接</text>
+</g>
+</svg>
