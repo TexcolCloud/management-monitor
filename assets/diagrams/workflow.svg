@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1640" height="1360" viewBox="0 0 1640 1360" role="img" aria-labelledby="title desc">
+<title id="title">工单采集与通知工作流</title><desc id="desc">范围：初始化 → 常驻增量监听 → 通知投递；Excel 自助导出为独立请求链路；全部连接线为水平或垂直线段。可放大阅读。</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L8 4 L0 8 Z" fill="#516477"/></marker></defs>
+<g font-family="Microsoft YaHei, Noto Sans CJK SC, PingFang SC, sans-serif">
+<rect x="0" y="0" width="1640" height="1360" fill="#ffffff" stroke="#ffffff" stroke-width="1.6"/>
+<text x="40" y="58" font-size="34" fill="#16324a" text-anchor="start" font-weight="700">工单采集与通知工作流</text>
+<text x="40" y="94" font-size="19" fill="#516477" text-anchor="start">范围：初始化 → 常驻增量监听 → 通知投递；Excel 自助导出为独立请求链路</text>
+<text x="40" y="132" font-size="18" fill="#516477" text-anchor="start">图例：矩形＝步骤 / 产物   菱形＝判断   圆形＝阶段接续   箭头＝执行方向   全部连线使用直角折线</text>
+<rect x="40" y="165" width="480" height="990" fill="#fafcfe" stroke="#c9d5df" stroke-width="1.6"/>
+<rect x="40" y="165" width="480" height="62" fill="#eaf0f6" stroke="#c9d5df" stroke-width="1.6"/>
+<text x="60" y="204" font-size="24" fill="#16324a" text-anchor="start" font-weight="700">01  建立完整基线</text>
+<rect x="580" y="165" width="480" height="990" fill="#fafcfe" stroke="#c9d5df" stroke-width="1.6"/>
+<rect x="580" y="165" width="480" height="62" fill="#eaf0f6" stroke="#c9d5df" stroke-width="1.6"/>
+<text x="600" y="204" font-size="24" fill="#16324a" text-anchor="start" font-weight="700">02  增量窗口与事务</text>
+<rect x="1120" y="165" width="480" height="990" fill="#fafcfe" stroke="#c9d5df" stroke-width="1.6"/>
+<rect x="1120" y="165" width="480" height="62" fill="#eaf0f6" stroke="#c9d5df" stroke-width="1.6"/>
+<text x="1140" y="204" font-size="24" fill="#16324a" text-anchor="start" font-weight="700">03  通知与恢复</text>
+<rect x="70" y="275" width="370" height="125" fill="#f4f8fc" stroke="#255f91" stroke-width="1.6"/>
+<rect x="70" y="275" width="5" height="125" fill="#255f91" stroke="#255f91" stroke-width="1.6"/>
+<text x="88" y="307" font-size="24" fill="#255f91" text-anchor="start" font-weight="700">人工登录并定位工单页</text>
+<text x="88" y="338" font-size="19" fill="#516477" text-anchor="start">Node / Playwright 复用浏览器会话</text>
+<text x="88" y="364" font-size="19" fill="#516477" text-anchor="start">Python 通过本地请求桥访问门户</text>
+<rect x="70" y="475" width="370" height="125" fill="#f4f8fc" stroke="#255f91" stroke-width="1.6"/>
+<rect x="70" y="475" width="5" height="125" fill="#255f91" stroke="#255f91" stroke-width="1.6"/>
+<text x="88" y="507" font-size="24" fill="#255f91" text-anchor="start" font-weight="700">采集最近 30 个自然日</text>
+<text x="88" y="538" font-size="19" fill="#516477" text-anchor="start">分页列表 → 详情 → 下载附件</text>
+<text x="88" y="564" font-size="19" fill="#516477" text-anchor="start">写暂存目录，保留清单及文件证据</text>
+<polyline points="255,400 255,475" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polygon points="255,680 400,745 255,810 110,745" fill="#fff9ed" stroke="#926218" stroke-width="1.8"/>
+<text x="255" y="742" font-size="22" fill="#16324a" text-anchor="middle" font-weight="700">快照完整？</text>
+<text x="255" y="769" font-size="17" fill="#516477" text-anchor="middle">数量、详情、附件与哈希</text>
+<polyline points="255,600 255,680" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="70" y="905" width="370" height="125" fill="#f0f8f4" stroke="#23735d" stroke-width="1.6"/>
+<rect x="70" y="905" width="5" height="125" fill="#23735d" stroke="#23735d" stroke-width="1.6"/>
+<text x="88" y="937" font-size="24" fill="#23735d" text-anchor="start" font-weight="700">发布快照并核对数据库</text>
+<text x="88" y="968" font-size="19" fill="#516477" text-anchor="start">初始化写入 / 补齐缺失工单</text>
+<text x="88" y="994" font-size="19" fill="#516477" text-anchor="start">完整后才进入监听</text>
+<polyline points="255,810 255,905" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="263" y="845" width="31" height="25" fill="#fff" stroke="#fff" stroke-width="1.6"/>
+<text x="270" y="861" font-size="17" fill="#516477" text-anchor="start">是</text>
+<polyline points="400,745 490,745 490,1115 440,1115" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="90" y="1120" font-size="19" fill="#926218" text-anchor="start">否：保留暂存，停止初始化</text>
+<circle cx="255" cy="1073" r="18" fill="#fff" stroke="#255f91" stroke-width="1.6"/>
+<text x="255" y="1081" font-size="24" fill="#255f91" text-anchor="middle" font-weight="700">A</text>
+<polyline points="255,1030 255,1055" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<circle cx="795" cy="248" r="18" fill="#fff" stroke="#255f91" stroke-width="1.6"/>
+<text x="795" y="256" font-size="24" fill="#255f91" text-anchor="middle" font-weight="700">A</text>
+<polyline points="795,266 795,275" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="610" y="275" width="370" height="125" fill="#f4f8fc" stroke="#255f91" stroke-width="1.6"/>
+<rect x="610" y="275" width="5" height="125" fill="#255f91" stroke="#255f91" stroke-width="1.6"/>
+<text x="628" y="307" font-size="24" fill="#255f91" text-anchor="start" font-weight="700">读取检查点与选择窗口</text>
+<text x="628" y="338" font-size="19" fill="#516477" text-anchor="start">采集窗口内列表、详情与附件</text>
+<text x="628" y="364" font-size="19" fill="#516477" text-anchor="start">验证完整后构造工单记录</text>
+<rect x="610" y="475" width="370" height="125" fill="#f4f8fc" stroke="#255f91" stroke-width="1.6"/>
+<rect x="610" y="475" width="5" height="125" fill="#255f91" stroke="#255f91" stroke-width="1.6"/>
+<text x="628" y="507" font-size="24" fill="#255f91" text-anchor="start" font-weight="700">在同一数据库事务提交</text>
+<text x="628" y="538" font-size="19" fill="#516477" text-anchor="start">工单幂等写入 + 新工单 Outbox</text>
+<text x="628" y="564" font-size="19" fill="#516477" text-anchor="start">比较检查点并推进到窗口末尾</text>
+<polyline points="795,400 795,475" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="610" y="705" width="370" height="125" fill="#f4f8fc" stroke="#255f91" stroke-width="1.6"/>
+<rect x="610" y="705" width="5" height="125" fill="#255f91" stroke="#255f91" stroke-width="1.6"/>
+<text x="628" y="737" font-size="24" fill="#255f91" text-anchor="start" font-weight="700">进入下一监听轮次</text>
+<text x="628" y="768" font-size="19" fill="#516477" text-anchor="start">默认每轮后等待 60 秒</text>
+<text x="628" y="794" font-size="19" fill="#516477" text-anchor="start">失败回滚，不推进原检查点</text>
+<polyline points="795,600 795,705" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="610,768 595,768 595,335 610,335" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="630" y="900" font-size="19" fill="#516477" text-anchor="start">已提交 Outbox 接续 B；</text>
+<text x="630" y="930" font-size="19" fill="#516477" text-anchor="start">通知失败不撤销已入库工单。</text>
+<circle cx="795" cy="1003" r="18" fill="#fff" stroke="#255f91" stroke-width="1.6"/>
+<text x="795" y="1011" font-size="24" fill="#255f91" text-anchor="middle" font-weight="700">B</text>
+<polyline points="980,535 1050,535 1050,1003 813,1003" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<circle cx="1335" cy="248" r="18" fill="#fff" stroke="#255f91" stroke-width="1.6"/>
+<text x="1335" y="256" font-size="24" fill="#255f91" text-anchor="middle" font-weight="700">B</text>
+<polyline points="1335,266 1335,275" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="1150" y="275" width="370" height="125" fill="#f4f8fc" stroke="#255f91" stroke-width="1.6"/>
+<rect x="1150" y="275" width="5" height="125" fill="#255f91" stroke="#255f91" stroke-width="1.6"/>
+<text x="1168" y="307" font-size="24" fill="#255f91" text-anchor="start" font-weight="700">领取到期通知</text>
+<text x="1168" y="338" font-size="19" fill="#516477" text-anchor="start">Outbox 租约避免并发重复领取</text>
+<text x="1168" y="364" font-size="19" fill="#516477" text-anchor="start">读取消息与附件的已投递进度</text>
+<rect x="1150" y="475" width="370" height="125" fill="#f4f8fc" stroke="#255f91" stroke-width="1.6"/>
+<rect x="1150" y="475" width="5" height="125" fill="#255f91" stroke="#255f91" stroke-width="1.6"/>
+<text x="1168" y="507" font-size="24" fill="#255f91" text-anchor="start" font-weight="700">调用飞书应用机器人</text>
+<text x="1168" y="538" font-size="19" fill="#516477" text-anchor="start">发送卡片、图片或文件</text>
+<text x="1168" y="564" font-size="19" fill="#516477" text-anchor="start">保存阶段进度与远端结果</text>
+<polyline points="1335,400 1335,475" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polygon points="1335,680 1480,745 1335,810 1190,745" fill="#fff9ed" stroke="#926218" stroke-width="1.8"/>
+<text x="1335" y="752" font-size="22" fill="#16324a" text-anchor="middle" font-weight="700">投递成功？</text>
+<polyline points="1335,600 1335,680" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="1150" y="905" width="370" height="125" fill="#f0f8f4" stroke="#23735d" stroke-width="1.6"/>
+<rect x="1150" y="905" width="5" height="125" fill="#23735d" stroke="#23735d" stroke-width="1.6"/>
+<text x="1168" y="937" font-size="24" fill="#23735d" text-anchor="start" font-weight="700">确认本地投递完成</text>
+<text x="1168" y="968" font-size="19" fill="#516477" text-anchor="start">完成状态落库，继续处理队列</text>
+<text x="1168" y="994" font-size="19" fill="#516477" text-anchor="start">远端成功但确认前中断可能重复</text>
+<polyline points="1335,810 1335,905" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="1343" y="845" width="31" height="25" fill="#fff" stroke="#fff" stroke-width="1.6"/>
+<text x="1350" y="861" font-size="17" fill="#516477" text-anchor="start">是</text>
+<polyline points="1480,745 1560,745 1560,335 1520,335" fill="none" stroke="#516477" stroke-width="2" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<rect x="1433" y="661" width="126" height="24" fill="#fff" stroke="#fff" stroke-width="1.6"/>
+<text x="1440" y="676" font-size="16" fill="#516477" text-anchor="start">否：退避后重试</text>
+<rect x="40" y="1195" width="1560" height="120" fill="#f6f8fb" stroke="#cad5df" stroke-width="1.6"/>
+<text x="60" y="1230" font-size="19" fill="#516477" text-anchor="start">导出请求：飞书长连接 → 检查用户允许名单与日期 → PostgreSQL 查询 → 生成 Excel → 私信请求者。</text>
+<text x="60" y="1260" font-size="19" fill="#516477" text-anchor="start">导出默认关闭；主流程内监听与独立监听不要重复启动。初始化仅在 --export-current 时额外生成本地 Excel。</text>
+<text x="60" y="1290" font-size="19" fill="#516477" text-anchor="start">正常停止：Ctrl+C 结束监听并关闭自有浏览器会话；已提交快照、检查点和 Outbox 保留。</text>
+</g>
+</svg>
